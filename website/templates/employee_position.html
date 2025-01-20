@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Сотрудники в постановках</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID-Должности</th>
+                <th scope="col">ID-Сотрудника</th>
+                <th scope="col">Начальная дата</th>
+                <th scope="col">Конечная дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if employee_position %}
+                {% for item in employee_position %}
+                    <tr>
+                        <td>{{ item.position_id }}</td>
+                        <td>{{ item.employee_id }}</td>
+                        <td>{{ item.start_date }}</td>
+                        <td>{{ item.end_date }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">Нет данных</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

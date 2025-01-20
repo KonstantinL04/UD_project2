@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Сотрудники</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">ФИО</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if employees %}
+                {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.employee_id }}</td>
+                        <td>{{ employee.full_name }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="2">Нет данных</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

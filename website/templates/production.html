@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Постановки</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID-Постановки</th>
+                <th scope="col">Название</th>
+                <th scope="col">Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if production %}
+                {% for item in production %}
+                    <tr>
+                        <td>{{ item.production_id }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.description }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">Нет данных</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <br>
+</div>
+{% endblock content %}

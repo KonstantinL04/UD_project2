@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Расписание</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID-Расписания</th>
+                <th scope="col">ID-Постановки</th>
+                <th scope="col">ID-Стадии</th>
+                <th scope="col">ID-Сотрудника</th>
+                <th scope="col">Состав</th>
+                <th scope="col">Начало постановки</th>
+                <th scope="col">Конец постановки</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if schedule %}
+                {% for event in schedule %}
+                    <tr>
+                        <td>{{ event.schedule_id }}</td>
+                        <td>{{ event.production_id }}</td>
+                        <td>{{ event.stage_id }}</td>
+                        <td>{{ event.employee_id }}</td>
+                        <td>{{ event.team }}</td>
+                        <td>{{ event.start_time }}</td>
+                        <td>{{ event.end_time }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">Нет данных</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

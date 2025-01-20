@@ -10,7 +10,31 @@
 
     {% include "navbar.html" %}
 
-  <div class="container">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2 bg-light">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'employees' %}">Сотрудники</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'positions' %}">Должности</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'production' %}">Постановки</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'employee_position' %}">Сотрудники в постановках</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'stages_production' %}">Стадии постановки</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'schedule' %}">Расписание</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-10">
         <br>
           {% if messages %}
           {% for message in messages %}
@@ -20,12 +44,11 @@
           </div>
           {% endfor %}
           {% endif %}
-    </div>
-    <div class="container">
-        <br>
-    {% block content %}
-
-    {% endblock content %}
+          <br>
+          {% block content %}
+          {% endblock %}
+        </div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>

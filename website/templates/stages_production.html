@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+    <h2>Стадии постановки</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID-Стадии</th>
+                <th scope="col">Название</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if stages_production %}
+                {% for stage in stages_production %}
+                    <tr>
+                        <td>{{ stage.stage_id }}</td>
+                        <td>{{ stage.title }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="2">Нет данных</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <br>
+{% endblock content %}

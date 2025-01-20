@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+<h2>Должности</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID-Должности</th>
+            <th scope="col">Название</th>
+            <th scope="col">Навыки</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if positions %}
+            {% for position in positions %}
+                <tr>
+                    <td>{{ position.position_id }}</td>
+                    <td>{{ position.title }}</td>
+                    <td>{{ position.skills }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="3">Нет данных</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+<br>
+</div>
+{% endblock content %}

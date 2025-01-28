@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import SignUpForm
 from .models import Production
 from .models import Employees, Positions, Production, StagesProduction, EmployeePosition, Schedule
+from django.core.paginator import Paginator
 
 def home (request):
     productions = Production.objects.all()
@@ -46,25 +47,50 @@ def register_user(request):
     return render(request, "register.html", {'form': form})
 
 def employees_view(request):
-    employees = Employees.objects.all()
-    return render(request, 'employees.html', {'employees': employees})
+    employees_list = Employees.objects.all()
+    paginator = Paginator(employees_list, 30)  # Показывать 30 сотрудников на странице
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'employees.html', {'page_obj': page_obj})
 
 def positions_view(request):
     positions = Positions.objects.all()
-    return render(request, 'positions.html', {'positions': positions})
+    paginator = Paginator(positions, 30)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'positions.html', {'page_obj': page_obj})
 
 def production_view(request):
     production = Production.objects.all()
-    return render(request, 'production.html', {'production': production})
+    paginator = Paginator(production, 30)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'production.html', {'page_obj': page_obj})
 
 def stages_production_view(request):
     stages_production = StagesProduction.objects.all()
-    return render(request, 'stages_production.html', {'stages_production': stages_production})
+    paginator = Paginator(stages_production, 30)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'stages_production.html', {'page_obj': page_obj})
 
 def employee_position_view(request):
     employee_position = EmployeePosition.objects.all()
-    return render(request, 'employee_position.html', {'employee_position': employee_position})
+    paginator = Paginator(employee_position, 30)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'employee_position.html', {'page_obj': page_obj})
+
 
 def schedule_view(request):
     schedule = Schedule.objects.all()
-    return render(request, 'schedule.html', {'schedule': schedule})
+    paginator = Paginator(schedule, 30)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'schedule.html', {'page_obj': page_obj})

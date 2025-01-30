@@ -2,24 +2,32 @@
 
 {% block content %}
 <div class="container">
-    <h2>Сотрудники в постановках</h2>
+    <h2>Должности сотрудников</h2>
+    <br>
+    <a href="{% url 'add_employee_position' %}" class="btn btn-primary mb-3">+ Добавить</a>
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">ID-Должности</th>
-                <th scope="col">ID-Сотрудника</th>
+                <th scope="col">Должность</th>
+                <th scope="col">Сотрудник</th>
                 <th scope="col">Начальная дата</th>
                 <th scope="col">Конечная дата</th>
+                <th scope="col">Действия</th>
             </tr>
         </thead>
         <tbody>
             {% if page_obj %}
                 {% for item in page_obj %}
                     <tr>
-                        <td>{{ item.position_id }}</td>
-                        <td>{{ item.employee_id }}</td>
+                        <td>{{ item.position.title }}</td>
+                        <td>{{ item.employee.full_name }}</td>
                         <td>{{ item.start_date }}</td>
                         <td>{{ item.end_date }}</td>
+                        <td>
+                            <a href="{% url 'employee_position_detail' item.id %}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                <span class="material-icons" style="color: white; font-size: 16px;">info</span>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             {% else %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Информация о расписании</h2>
+    <table class="table">
+        <tr>
+            <th>Команда</th>
+            <td>{{ schedule.team }}</td>
+        </tr>
+        <tr>
+            <th>Начальное время</th>
+            <td>{{ schedule.start_time }}</td>
+        </tr>
+        <tr>
+            <th>Конечное время</th>
+            <td>{{ schedule.end_time }}</td>
+        </tr>
+        <tr>
+            <th>Сотрудник</th>
+            <td>{{ schedule.employee.full_name }}</td>
+        </tr>
+        <tr>
+            <th>Производство</th>
+            <td>{{ schedule.production.title }}</td>
+        </tr>
+        <tr>
+            <th>Стадия</th>
+            <td>{{ schedule.stage.title }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'schedule' %}" class="btn btn-secondary">Вернуться к списку</a>
+</div>
+{% endblock %}

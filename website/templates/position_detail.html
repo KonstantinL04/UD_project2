@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Информация о должности</h2>
+    <table class="table">
+        <tr>
+            <th>Название</th>
+            <td>{{ position.title }}</td>
+        </tr>
+        <tr>
+            <th>Навыки</th>
+            <td>{{ position.skills }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'positions' %}" class="btn btn-secondary">Вернуться к списку</a>
+</div>
+{% endblock %}

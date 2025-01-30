@@ -3,19 +3,25 @@
 {% block content %}
 <div class="container">
     <h2>Стадии постановки</h2>
+    <br>
+    <a href="{% url 'add_stages_production' %}" class="btn btn-primary mb-3">+ Добавить</a>
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">ID-Стадии</th>
                 <th scope="col">Название</th>
+                <th scope="col">Действия</th>
             </tr>
         </thead>
         <tbody>
             {% if page_obj %}
                 {% for stage in page_obj %}
                     <tr>
-                        <td>{{ stage.stage_id }}</td>
                         <td>{{ stage.title }}</td>
+                        <td>
+                            <a href="{% url 'stages_production_detail' stage.stage_id %}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                <span class="material-icons" style="color: white; font-size: 16px;">info</span>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             {% else %}

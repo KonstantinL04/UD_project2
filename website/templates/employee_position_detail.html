@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Информация о должности сотрудника</h2>
+    <table class="table">
+        <tr>
+            <th>Должность</th>
+            <td>{{ employee_position.position.title }}</td>
+        </tr>
+        <tr>
+            <th>Сотрудник</th>
+            <td>{{ employee_position.employee.full_name }}</td>
+        </tr>
+        <tr>
+            <th>Начальная дата</th>
+            <td>{{ employee_position.start_date }}</td>
+        </tr>
+        <tr>
+            <th>Конечная дата</th>
+            <td>{{ employee_position.end_date }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'employee_position' %}" class="btn btn-secondary">Вернуться к списку</a>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Информация о сотруднике</h2>
+    <table class="table">
+        <tr>
+            <th>ФИО</th>
+            <td>{{ employee.full_name }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'employees' %}" class="btn btn-secondary">Вернуться к списку</a>
+</div>
+{% endblock %}

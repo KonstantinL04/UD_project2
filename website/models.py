@@ -5,8 +5,7 @@ class Employees(models.Model):
     full_name = models.CharField(max_length=255)
 
     class Meta:
-        db_table = 'employees'  # Укажите имя существующей таблицы
-
+        db_table = 'employees'
 
 class Positions(models.Model):
     position_id = models.AutoField(primary_key=True)
@@ -16,6 +15,15 @@ class Positions(models.Model):
     class Meta:
         db_table = 'positions'
 
+class EmployeePosition(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    employee = models.ForeignKey(Employees, on_delete=models.CASCADE)  
+    position = models.ForeignKey(Positions, on_delete=models.CASCADE)  
+    start_date = models.DateField()
+    end_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'employee_position'
 
 class Production(models.Model):
     production_id = models.AutoField(primary_key=True)
@@ -33,20 +41,8 @@ class StagesProduction(models.Model):
     class Meta:
         db_table = 'stages_production'
 
-
-class EmployeePosition(models.Model):
-    position = models.OneToOneField('Positions', models.DO_NOTHING, primary_key=True)  # The composite primary key (position_id, employee_id) found, that is not supported. The first column is selected.
-    employee = models.ForeignKey('Employees', models.DO_NOTHING)
-    start_date = models.DateField()
-    end_date = models.DateField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'employee_position'
-        unique_together = (('position', 'employee'),)
-
-
 class Schedule(models.Model):
-    schedule_id = models.AutoField(primary_key=True)  # The composite primary key (schedule_id, production_id) found, that is not supported. The first column is selected.
+    schedule_id = models.AutoField(primary_key=True) 
     production = models.ForeignKey(Production, models.DO_NOTHING)
     stage = models.ForeignKey('StagesProduction', models.DO_NOTHING)
     employee = models.ForeignKey(Employees, models.DO_NOTHING)

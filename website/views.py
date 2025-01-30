@@ -1,10 +1,12 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SignUpForm
 from .models import Production
 from .models import Employees, Positions, Production, StagesProduction, EmployeePosition, Schedule
 from django.core.paginator import Paginator
+from .forms import EmployeeForm, PositionForm, ProductionForm, StagesProductionForm, EmployeePositionForm, ScheduleForm
+from django.urls import reverse
 
 def home (request):
     productions = Production.objects.all()
@@ -79,18 +81,246 @@ def stages_production_view(request):
     return render(request, 'stages_production.html', {'page_obj': page_obj})
 
 def employee_position_view(request):
-    employee_position = EmployeePosition.objects.all()
+    employee_position = EmployeePosition.objects.select_related('employee', 'position').order_by('start_date').all()
     paginator = Paginator(employee_position, 30)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'employee_position.html', {'page_obj': page_obj})
 
-
 def schedule_view(request):
-    schedule = Schedule.objects.all()
+    schedule = Schedule.objects.select_related('production', 'stage', 'employee').order_by('schedule_id').all()
     paginator = Paginator(schedule, 30)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'schedule.html', {'page_obj': page_obj})
+
+
+def add_employee(request):
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Сотрудник успешно добавлен.')
+            return redirect('employees')
+    else:
+        form = EmployeeForm()
+    return render(request, 'add_record.html', {'form': form, 'return_url': reverse('employees')})
+
+def add_position(request):
+    if request.method == 'POST':
+        form = PositionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Должность успешно добавлена.')
+            return redirect('positions')
+    else:
+        form = PositionForm()
+    return render(request, 'add_record.html', {'form': form, 'return_url': reverse('positions')})
+
+def add_production(request):
+    if request.method == 'POST':
+        form = ProductionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Производство успешно добавлено.')
+            return redirect('production')
+    else:
+        form = ProductionForm()
+    return render(request, 'add_record.html', {'form': form, 'return_url': reverse('production')})
+
+def add_stages_production(request):
+    if request.method == 'POST':
+        form = StagesProductionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Стадия успешно добавлена.')
+            return redirect('stages_production')
+    else:
+        form = StagesProductionForm()
+    return render(request, 'add_record.html', {'form': form, 'return_url': reverse('stages_production')})
+
+def add_employee_position(request):
+    if request.method == 'POST':
+        form = EmployeePositionForm(request.POST)
+        if form.is_valid():
+            position = form.cleaned_data['position']
+            employee = form.cleaned_data['employee']
+            print(f"Position: {position}, Employee: {employee}")  # Отладочное сообщение
+            if EmployeePosition.objects.filter(position=position, employee=employee).exists():
+                messages.error(request, 'Должность сотрудника с этой должностью уже существует.')
+                print("Duplicate entry found")  # Отладочное сообщение
+            else:
+                form.save()
+                messages.success(request, 'Должность сотрудника успешно добавлена.')
+                print("Form saved successfully")  # Отладочное сообщение
+                return redirect('employee_position')
+        else:
+            print("Form errors:", form.errors)  # Отладочное сообщение
+    else:
+        form = EmployeePositionForm()
+    employees = Employees.objects.all()
+    positions = Positions.objects.all()
+    return render(request, 'add_employee_position.html', {'form': form, 'positions': positions, 'employees': employees, 'return_url': reverse('employee_position')})
+
+def add_schedule(request):
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Расписание успешно добавлено.')
+            return redirect('schedule')
+    else:
+        form = ScheduleForm()
+    productions = Production.objects.all()
+    stages = StagesProduction.objects.all()
+    employees = Employees.objects.all()
+    return render(request, 'add_schedule.html', {'form': form, 'productions': productions, 'stages': stages, 'employees': employees, 'return_url': reverse('schedule')})
+
+def edit_employee(request, employee_id):
+    employee = Employees.objects.get(employee_id=employee_id)
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST, instance=employee)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Сотрудник успешно изменен.')
+            return redirect('employees')
+    else:
+        form = EmployeeForm(instance=employee)
+    return render(request, 'edit_record.html', {'form': form, 'return_url': reverse('employees')})
+
+def edit_position(request, position_id):
+    position = Positions.objects.get(position_id=position_id)
+    if request.method == 'POST':
+        form = PositionForm(request.POST, instance=position)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Должность успешно изменена.')
+            return redirect('positions')
+    else:
+        form = PositionForm(instance=position)
+    return render(request, 'edit_record.html', {'form': form, 'return_url': reverse('positions')})
+
+def edit_production(request, production_id):
+    production = Production.objects.get(production_id=production_id)
+    if request.method == 'POST':
+        form = ProductionForm(request.POST, instance=production)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Производство успешно изменено.')
+            return redirect('production')
+    else:
+        form = ProductionForm(instance=production)
+    return render(request, 'edit_record.html', {'form': form, 'return_url': reverse('production')})
+
+def edit_stages_production(request, stage_id):
+    stage = StagesProduction.objects.get(stage_id=stage_id)
+    if request.method == 'POST':
+        form = StagesProductionForm(request.POST, instance=stage)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Стадия успешно изменена.')
+            return redirect('stages_production')
+    else:
+        form = StagesProductionForm(instance=stage)
+    return render(request, 'edit_record.html', {'form': form, 'return_url': reverse('stages_production')})
+
+def edit_employee_position(request, id):
+    employee_position = EmployeePosition.objects.get(id=id)
+    if request.method == 'POST':
+        form = EmployeePositionForm(request.POST, instance=employee_position)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Должность сотрудника успешно изменена.')
+            return redirect('employee_position')
+    else:
+        form = EmployeePositionForm(instance=employee_position)
+    employees = Employees.objects.all()
+    positions = Positions.objects.all()
+    return render(request, 'edit_employee_position.html', {'form': form, 'positions': positions, 'employees': employees, 'return_url': reverse('employee_position')})
+
+def edit_schedule(request, schedule_id):
+    schedule = Schedule.objects.get(schedule_id=schedule_id)
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST, instance=schedule)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Расписание успешно изменено.')
+            return redirect('schedule')
+    else:
+        form = ScheduleForm(instance=schedule)
+    productions = Production.objects.all()
+    stages = StagesProduction.objects.all()
+    employees = Employees.objects.all()
+    return render(request, 'edit_schedule.html', {'form': form, 'productions': productions, 'stages': stages, 'employees': employees, 'return_url': reverse('schedule')})
+
+def delete_employee(request, employee_id):
+    employee = Employees.objects.get(employee_id=employee_id)
+    employee.delete()
+    messages.success(request, 'Сотрудник успешно удален.')
+    return redirect('employees')
+
+def delete_position(request, position_id):
+    position = Positions.objects.get(position_id=position_id)
+    position.delete()
+    messages.success(request, 'Должность успешно удалена.')
+    return redirect('positions')
+
+def delete_production(request, production_id):
+    production = Production.objects.get(production_id=production_id)
+    production.delete()
+    messages.success(request, 'Производство успешно удалено.')
+    return redirect('production')
+
+def delete_stages_production(request, stage_id):
+    stage = StagesProduction.objects.get(stage_id=stage_id)
+    stage.delete()
+    messages.success(request, 'Стадия успешно удалена.')
+    return redirect('stages_production')
+
+def delete_employee_position(request, id):
+    employee_position = EmployeePosition.objects.get(id=id)
+    employee_position.delete()
+    messages.success(request, 'Должность сотрудника успешно удалена.')
+    return redirect('employee_position')
+
+def delete_schedule(request, schedule_id):
+    schedule = Schedule.objects.get(schedule_id=schedule_id)
+    schedule.delete()
+    messages.success(request, 'Расписание успешно удалено.')
+    return redirect('schedule')
+
+def search(request):
+    query = request.GET.get('q')
+    employees = Employees.objects.filter(full_name__icontains=query)
+    positions = Positions.objects.filter(title__icontains=query)
+    productions = Production.objects.filter(title__icontains=query)
+    stages_production = StagesProduction.objects.filter(title__icontains=query)
+    employee_position = EmployeePosition.objects.filter(employee__full_name__icontains=query)
+    schedule = Schedule.objects.filter(team__icontains=query)
+    return render(request, 'search.html', {'employees': employees, 'positions': positions, 'productions': productions, 'stages_production': stages_production, 'employee_position': employee_position, 'schedule': schedule})
+
+def employee_detail(request, employee_id):
+    employee = Employees.objects.get(employee_id=employee_id)
+    return render(request, 'employee_detail.html', {'employee': employee})
+
+def position_detail(request, position_id):
+    position = Positions.objects.get(position_id=position_id)
+    return render(request, 'position_detail.html', {'position': position})
+
+def production_detail(request, production_id):
+    production = Production.objects.get(production_id=production_id)
+    return render(request, 'production_detail.html', {'production': production})
+
+def stages_production_detail(request, stage_id):
+    stage = StagesProduction.objects.get(stage_id=stage_id)
+    return render(request, 'stages_production_detail.html', {'stage': stage})
+
+def employee_position_detail(request, id):
+    employee_position = get_object_or_404(EmployeePosition, id=id)
+    return render(request, 'employee_position_detail.html', {'employee_position': employee_position})
+
+def schedule_detail(request, schedule_id):
+    schedule = Schedule.objects.get(schedule_id=schedule_id)
+    return render(request, 'schedule_detail.html', {'schedule': schedule})

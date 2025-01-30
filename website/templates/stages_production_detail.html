@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Информация о стадии производства</h2>
+    <table class="table">
+        <tr>
+            <th>Название</th>
+            <td>{{ stage.title }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'stages_production' %}" class="btn btn-secondary">Вернуться к списку</a>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Добавить должность сотрудника</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="mb-3">
+            <label for="position_name" class="form-label">Должность</label>
+            <input type="text" id="position_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#positionModal">
+        </div>
+        <div class="mb-3">
+            <label for="employee_name" class="form-label">Сотрудник</label>
+            <input type="text" id="employee_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#employeeModal">
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ return_url }}" class="btn btn-secondary">Вернуться к списку</a>
+    </form>
+</div>
+
+<!-- Модальное окно для выбора должности -->
+<div class="modal fade" id="positionModal" tabindex="-1" aria-labelledby="positionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="positionModalLabel">Выбрать должность</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Название</th>
+                            <th scope="col">Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for position in positions %}
+                            <tr>
+                                <td>{{ position.position_id }}</td>
+                                <td>{{ position.title }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary select-position" data-id="{{ position.position_id }}" data-name="{{ position.title }}">Выбрать</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для выбора сотрудника -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="employeeModalLabel">Выбрать сотрудника</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">ФИО</th>
+                            <th scope="col">Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                            <tr>
+                                <td>{{ employee.employee_id }}</td>
+                                <td>{{ employee.full_name }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary select-employee" data-id="{{ employee.employee_id }}" data-name="{{ employee.full_name }}">Выбрать</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.select-position').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var positionId = this.getAttribute('data-id');
+                var positionName = this.getAttribute('data-name');
+                document.getElementById('position_id').value = positionId;
+                document.getElementById('position_name').value = positionName;
+                var positionModal = bootstrap.Modal.getInstance(document.getElementById('positionModal'));
+                positionModal.hide();
+            });
+        });
+
+        document.querySelectorAll('.select-employee').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var employeeId = this.getAttribute('data-id');
+                var employeeName = this.getAttribute('data-name');
+                document.getElementById('employee_id').value = employeeId;
+                document.getElementById('employee_name').value = employeeName;
+                var employeeModal = bootstrap.Modal.getInstance(document.getElementById('employeeModal'));
+                employeeModal.hide();
+            });
+        });
+    });
+</script>
+{% endblock %}

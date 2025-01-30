@@ -124,7 +124,7 @@ def add_production(request):
         form = ProductionForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Производство успешно добавлено.')
+            messages.success(request, 'Постановка успешно добавлена.')
             return redirect('production')
     else:
         form = ProductionForm()
@@ -135,7 +135,7 @@ def add_stages_production(request):
         form = StagesProductionForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Стадия успешно добавлена.')
+            messages.success(request, 'Стадия постановки успешно добавлена.')
             return redirect('stages_production')
     else:
         form = StagesProductionForm()
@@ -256,37 +256,37 @@ def edit_schedule(request, schedule_id):
     return render(request, 'edit_schedule.html', {'form': form, 'productions': productions, 'stages': stages, 'employees': employees, 'return_url': reverse('schedule')})
 
 def delete_employee(request, employee_id):
-    employee = Employees.objects.get(employee_id=employee_id)
+    employee = get_object_or_404(Employees, employee_id=employee_id)
     employee.delete()
     messages.success(request, 'Сотрудник успешно удален.')
     return redirect('employees')
 
 def delete_position(request, position_id):
-    position = Positions.objects.get(position_id=position_id)
+    position = get_object_or_404(Positions, position_id=position_id)
     position.delete()
     messages.success(request, 'Должность успешно удалена.')
     return redirect('positions')
 
 def delete_production(request, production_id):
-    production = Production.objects.get(production_id=production_id)
+    production = get_object_or_404(Production, production_id=production_id)
     production.delete()
-    messages.success(request, 'Производство успешно удалено.')
+    messages.success(request, 'Постановка успешно удалена.')
     return redirect('production')
 
 def delete_stages_production(request, stage_id):
-    stage = StagesProduction.objects.get(stage_id=stage_id)
+    stage = get_object_or_404(StagesProduction, stage_id=stage_id)
     stage.delete()
-    messages.success(request, 'Стадия успешно удалена.')
+    messages.success(request, 'Стадия постановки успешно удалена.')
     return redirect('stages_production')
 
 def delete_employee_position(request, id):
-    employee_position = EmployeePosition.objects.get(id=id)
+    employee_position = get_object_or_404(EmployeePosition, id=id)
     employee_position.delete()
     messages.success(request, 'Должность сотрудника успешно удалена.')
     return redirect('employee_position')
 
 def delete_schedule(request, schedule_id):
-    schedule = Schedule.objects.get(schedule_id=schedule_id)
+    schedule = get_object_or_404(Schedule, schedule_id=schedule_id)
     schedule.delete()
     messages.success(request, 'Расписание успешно удалено.')
     return redirect('schedule')

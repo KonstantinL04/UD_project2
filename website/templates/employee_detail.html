@@ -9,6 +9,20 @@
             <td>{{ employee.full_name }}</td>
         </tr>
     </table>
-    <a href="{% url 'employees' %}" class="btn btn-secondary">Вернуться к списку</a>
+    <div style="display: inline-flex; gap: 10px;">
+        <form action="{% url 'delete_employee' employee.employee_id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger d-flex align-items-center">
+                <span class="material-icons" style="color: white; font-size: 16px; margin-right: 4px;">delete</span>
+                Удалить
+            </button>
+        </form>
+        <a href="{% url 'employees' %}" class="btn btn-secondary">Вернуться к списку</a>
+    </div>
 </div>
+<script>
+    function confirmDelete() {
+        return confirm("Вы действительно хотите удалить эту запись?");
+    }
+</script>
 {% endblock %}

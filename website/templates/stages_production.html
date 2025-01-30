@@ -18,9 +18,17 @@
                     <tr>
                         <td>{{ stage.title }}</td>
                         <td>
-                            <a href="{% url 'stages_production_detail' stage.stage_id %}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
-                                <span class="material-icons" style="color: white; font-size: 16px;">info</span>
-                            </a>
+                            <div style="display: inline-flex; gap: 10px;">
+                                <a href="{% url 'stages_production_detail' stage.stage_id %}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                    <span class="material-icons" style="color: white; font-size: 16px;">info</span>
+                                </a>
+                                <form action="{% url 'delete_stages_production' stage.stage_id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                        <span class="material-icons" style="color: white; font-size: 16px;">delete</span>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}
@@ -69,4 +77,9 @@
         </ul>
     </nav>
 </div>
+<script>
+    function confirmDelete() {
+        return confirm("Вы действительно хотите удалить эту запись?");
+    }
+</script>
 {% endblock content %}

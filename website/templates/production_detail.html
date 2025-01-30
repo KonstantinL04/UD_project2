@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h2>Информация о производстве</h2>
+    <h2>Информация о постановке</h2>
     <table class="table">
         <tr>
             <th>Название</th>
@@ -13,6 +13,20 @@
             <td>{{ production.description }}</td>
         </tr>
     </table>
-    <a href="{% url 'production' %}" class="btn btn-secondary">Вернуться к списку</a>
+    <div style="display: inline-flex; gap: 10px;">
+        <form action="{% url 'delete_production' production.production_id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger d-flex align-items-center">
+                <span class="material-icons" style="color: white; font-size: 16px; margin-right: 4px;">delete</span>
+                Удалить
+            </button>
+        </form>
+        <a href="{% url 'production' %}" class="btn btn-secondary">Вернуться к списку</a>
+    </div>
 </div>
+<script>
+    function confirmDelete() {
+        return confirm("Вы действительно хотите удалить эту запись?");
+    }
+</script>
 {% endblock %}

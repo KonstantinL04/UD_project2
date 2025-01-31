@@ -7,6 +7,7 @@ from .models import Employees, Positions, Production, StagesProduction, Employee
 from django.core.paginator import Paginator
 from .forms import EmployeeForm, PositionForm, ProductionForm, StagesProductionForm, EmployeePositionForm, ScheduleForm
 from django.urls import reverse
+from django.db.models import Q
 
 def home (request):
     productions = Production.objects.all()
@@ -49,49 +50,68 @@ def register_user(request):
     return render(request, "register.html", {'form': form})
 
 def employees_view(request):
-    employees_list = Employees.objects.all()
-    paginator = Paginator(employees_list, 30)  # Показывать 30 сотрудников на странице
+    query = request.GET.get('q')
+    if query:
+        employees_list = Employees.objects.filter(Q(full_name__icontains=query))
+    else:
+        employees_list = Employees.objects.all()
+    paginator = Paginator(employees_list, 30) 
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'employees.html', {'page_obj': page_obj})
 
 def positions_view(request):
-    positions = Positions.objects.all()
-    paginator = Paginator(positions, 30)
-
+    query = request.GET.get('q')
+    if query:
+        positions_list = Positions.objects.filter(Q(title__icontains=query)) | Positions.objects.filter(Q(skills__icontains=query))
+    else:
+        positions_list = Positions.objects.all()
+    paginator = Paginator(positions_list, 30)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'positions.html', {'page_obj': page_obj})
 
 def production_view(request):
-    production = Production.objects.all()
+    query = request.GET.get('q')
+    if query:
+        production = Production.objects.filter(Q(title__icontains=query)) | Production.objects.filter(Q(description__icontains=query))
+    else:
+        production = Production.objects.all()
     paginator = Paginator(production, 30)
-
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'production.html', {'page_obj': page_obj})
 
 def stages_production_view(request):
-    stages_production = StagesProduction.objects.all()
+    query = request.GET.get('q')
+    if query:
+        stages_production = StagesProduction.objects.filter(Q(title__icontains=query))
+    else:
+        stages_production = StagesProduction.objects.all()
     paginator = Paginator(stages_production, 30)
-
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'stages_production.html', {'page_obj': page_obj})
 
 def employee_position_view(request):
-    employee_position = EmployeePosition.objects.select_related('employee', 'position').order_by('start_date').all()
+    query = request.GET.get('q')
+    if query:
+        employee_position = EmployeePosition.objects.filter(Q(employee__full_name__icontains=query) | Q(position__title__icontains=query)) | EmployeePosition.objects.filter(Q(start_date__icontains=query) | Q(end_date__icontains=query))
+    else:
+        employee_position = EmployeePosition.objects.select_related('employee', 'position').order_by('start_date').all()
     paginator = Paginator(employee_position, 30)
-
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'employee_position.html', {'page_obj': page_obj})
 
 def schedule_view(request):
-    schedule = Schedule.objects.select_related('production', 'stage', 'employee').order_by('schedule_id').all()
-    paginator = Paginator(schedule, 30)
-
+    query = request.GET.get('q')
+    if query:
+        schedules_list = Schedule.objects.filter(Q(production__title__icontains=query)) | Schedule.objects.filter(Q(stage__title__icontains=query)) | Schedule.objects.filter(Q(employee__full_name__icontains=query)) | Schedule.objects.filter(Q(team__icontains=query)) | Schedule.objects.filter(Q(start_time__icontains=query)) | Schedule.objects.filter(Q(end_time__icontains=query))
+    else:
+        schedules_list = Schedule.objects.all()
+    paginator = Paginator(schedules_list, 30)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'schedule.html', {'page_obj': page_obj})
@@ -147,17 +167,17 @@ def add_employee_position(request):
         if form.is_valid():
             position = form.cleaned_data['position']
             employee = form.cleaned_data['employee']
-            print(f"Position: {position}, Employee: {employee}")  # Отладочное сообщение
+            print(f"Position: {position}, Employee: {employee}")  
             if EmployeePosition.objects.filter(position=position, employee=employee).exists():
                 messages.error(request, 'Должность сотрудника с этой должностью уже существует.')
-                print("Duplicate entry found")  # Отладочное сообщение
+                print("Duplicate entry found")  
             else:
                 form.save()
                 messages.success(request, 'Должность сотрудника успешно добавлена.')
-                print("Form saved successfully")  # Отладочное сообщение
+                print("Form saved successfully")  
                 return redirect('employee_position')
         else:
-            print("Form errors:", form.errors)  # Отладочное сообщение
+            print("Form errors:", form.errors)  
     else:
         form = EmployeePositionForm()
     employees = Employees.objects.all()

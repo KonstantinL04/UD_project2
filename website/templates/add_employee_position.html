@@ -8,12 +8,12 @@
         {{ form.as_p }}
 
         <div class="mb-3">
-            <label for="position_name" class="form-label">Должность</label>
-            <input type="text" id="position_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#positionModal">
+            <label for="position_name" class="form-label" style="font-weight: bold;">Должность:</label>
+            <input type="text" id="position_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#positionModal" style="max-width: 300px;">
         </div>
         <div class="mb-3">
-            <label for="employee_name" class="form-label">Сотрудник</label>
-            <input type="text" id="employee_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#employeeModal">
+            <label for="employee_name" class="form-label" style="font-weight: bold;">Сотрудник:</label>
+            <input type="text" id="employee_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#employeeModal" style="max-width: 300px;">
         </div>
         <button type="submit" class="btn btn-primary">Сохранить</button>
         <a href="{{ return_url }}" class="btn btn-secondary">Вернуться к списку</a>

@@ -36,5 +36,12 @@ urlpatterns = [
     path('stages_production/delete/<int:stage_id>/', views.delete_stages_production, name='delete_stages_production'),
     path('schedule/delete/<int:schedule_id>/', views.delete_schedule, name='delete_schedule'),
 
+    path('employees/edit/<int:employee_id>/', views.edit_employee, name='edit_employee'),
+    path('positions/edit/<int:position_id>/', views.edit_position, name='edit_position'),
+    path('production/edit/<int:production_id>/', views.edit_production, name='edit_production'),
+    path('stages_production/edit/<int:stage_id>/', views.edit_stages_production, name='edit_stages_production'),
+    path('employee_position/edit/<int:id>/', views.edit_employee_position, name='edit_employee_position'),
+    path('schedule/edit/<int:schedule_id>/', views.edit_schedule, name='edit_schedule'),
+
 
 ]

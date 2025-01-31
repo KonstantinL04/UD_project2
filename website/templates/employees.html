@@ -19,8 +19,11 @@
                         <td>{{ employee.full_name }}</td>
                         <td>
                             <div style="display: inline-flex; gap: 10px;">
-                                <a href="{% url 'employee_detail' employee.employee_id %}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; margin-right: 4px;">
+                                <a href="{% url 'employee_detail' employee.employee_id %}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
                                     <span class="material-icons" style="color: white; font-size: 16px;">info</span>
+                                </a>
+                                <a href="{% url 'edit_employee' employee.employee_id %}" class="btn btn-warning btn-sm d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                    <span class="material-icons" style="color: white; font-size: 16px;">edit</span>
                                 </a>
                                 <form action="{% url 'delete_employee' employee.employee_id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
                                     {% csrf_token %}

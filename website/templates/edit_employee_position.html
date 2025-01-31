@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Редактировать должность сотрудника</h2>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="mb-3">
+            <label for="position_name" class="form-label" style="font-weight: bold">Должность:</label>
+            <input type="text" id="position_name" class="form-control" value="{{ employee_position.position.title }}" readonly data-bs-toggle="modal" data-bs-target="#positionModal" style="max-width: 300px;">
+        </div>
+        <div class="mb-3">
+            <label for="employee_name" class="form-label" style="font-weight: bold">Сотрудник:</label>
+            <input type="text" id="employee_name" class="form-control" value="{{ employee_position.employee.full_name }}" readonly data-bs-toggle="modal" data-bs-target="#employeeModal" style="max-width: 300px;">
+            <input type="hidden" id="employee_id" name="employee_id" value="{{ employee_position.employee.employee_id }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'employee_position' %}" class="btn btn-secondary">Вернуться к списку</a>
+    </form>
+</div>
+
+<!-- Модальное окно для выбора должности -->
+<div class="modal fade" id="positionModal" tabindex="-1" aria-labelledby="positionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="positionModalLabel">Выбрать должность</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for position in positions %}
+                            <tr>
+                                <td>{{ position.title }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" onclick="selectPosition('{{ position.title }}')">Выбрать</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для выбора сотрудника -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="employeeModalLabel">Выбрать сотрудника</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                            <tr>
+                                <td>{{ employee.full_name }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" onclick="selectEmployee('{{ employee.employee_id }}', '{{ employee.full_name }}')">Выбрать</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function selectPosition(title) {
+        document.getElementById('position_name').value = title;
+        var modal = bootstrap.Modal.getInstance(document.getElementById('positionModal'));
+        modal.hide();
+    }
+
+    function selectEmployee(id, full_name) {
+        document.getElementById('employee_id').value = id;
+        document.getElementById('employee_name').value = full_name;
+        var modal = bootstrap.Modal.getInstance(document.getElementById('employeeModal'));
+        modal.hide();
+    }
+</script>
+{% endblock %}

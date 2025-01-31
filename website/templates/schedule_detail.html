@@ -5,15 +5,15 @@
     <h2>Информация о расписании</h2>
     <table class="table">
         <tr>
-            <th>Команда</th>
+            <th>Состав</th>
             <td>{{ schedule.team }}</td>
         </tr>
         <tr>
-            <th>Начальное время</th>
+            <th>Начало постановки</th>
             <td>{{ schedule.start_time }}</td>
         </tr>
         <tr>
-            <th>Конечное время</th>
+            <th>Конец постановки</th>
             <td>{{ schedule.end_time }}</td>
         </tr>
         <tr>
@@ -21,7 +21,7 @@
             <td>{{ schedule.employee.full_name }}</td>
         </tr>
         <tr>
-            <th>Производство</th>
+            <th>Постановка</th>
             <td>{{ schedule.production.title }}</td>
         </tr>
         <tr>
@@ -29,7 +29,11 @@
             <td>{{ schedule.stage.title }}</td>
         </tr>
     </table>
-    <div style="display: inline-flex; gap: 10px;">
+    <div style="display: inline-flex; gap: 5px;">
+        <a href="{% url 'edit_schedule' schedule.schedule_id %}" class="btn btn-warning d-flex align-items-center">
+            <span class="material-icons" style="color: white; font-size: 16px; margin-right: 4px;">edit</span>
+            <span style="color: white;">Редактировать</span>
+        </a>
         <form action="{% url 'delete_schedule' schedule.schedule_id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger d-flex align-items-center">

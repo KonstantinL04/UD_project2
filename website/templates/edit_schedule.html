@@ -2,24 +2,29 @@
 
 {% block content %}
 <div class="container">
-    <h2>Добавить расписание</h2>
+    <h2>Редактировать расписание</h2>
+    <br>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+
         <div class="mb-3">
-            <label for="production_name" class="form-label" style="font-weight: bold;">Постановка:</label>
-            <input type="text" id="production_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#productionModal" style="max-width: 300px;">
+            <label for="production_name" class="form-label" style="font-weight: bold">Постановка:</label>
+            <input type="text" id="production_name" name="production_name" class="form-control" value="{{ schedule.production.title }}" readonly data-bs-toggle="modal" data-bs-target="#productionModal" style="max-width: 300px;">
+            <input type="hidden" id="production_id" name="production_id" value="{{ schedule.production.production_id }}">
         </div>
         <div class="mb-3">
-            <label for="stage_name" class="form-label" style="font-weight: bold;">Стадия:</label>
-            <input type="text" id="stage_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#stageModal" style="max-width: 300px;">
+            <label for="stage_name" class="form-label" style="font-weight: bold">Стадия:</label>
+            <input type="text" id="stage_name" name="stage_name" class="form-control" value="{{ schedule.stage.title }}" readonly data-bs-toggle="modal" data-bs-target="#stageModal" style="max-width: 300px;">
+            <input type="hidden" id="stage_id" name="stage_id" value="{{ schedule.stage.stage_id }}">
         </div>
         <div class="mb-3">
-            <label for="employee_name" class="form-label" style="font-weight: bold;">Сотрудник:</label>
-            <input type="text" id="employee_name" class="form-control" readonly data-bs-toggle="modal" data-bs-target="#employeeModal" style="max-width: 300px;">
+            <label for="employee_name" class="form-label" style="font-weight: bold">Сотрудник:</label>
+            <input type="text" id="employee_name" name="employee_name" class="form-control" value="{{ schedule.employee.full_name }}" readonly data-bs-toggle="modal" data-bs-target="#employeeModal" style="max-width: 300px;">
+            <input type="hidden" id="employee_id" name="employee_id" value="{{ schedule.employee.employee_id }}">
         </div>
         <button type="submit" class="btn btn-primary">Сохранить</button>
-        <a href="{{ return_url }}" class="btn btn-secondary">Вернуться к списку</a>
+        <a href="{% url 'schedule' %}" class="btn btn-secondary">Вернуться к списку</a>
     </form>
 </div>
 
@@ -46,7 +51,7 @@
                                 <td>{{ production.production_id }}</td>
                                 <td>{{ production.title }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary select-production" data-id="{{ production.production_id }}" data-name="{{ production.title }}">Выбрать</button>
+                                    <button type="button" class="btn btn-primary" onclick="selectProduction('{{ production.production_id }}', '{{ production.title }}')">Выбрать</button>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -80,7 +85,7 @@
                                 <td>{{ stage.stage_id }}</td>
                                 <td>{{ stage.title }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary select-stage" data-id="{{ stage.stage_id }}" data-name="{{ stage.title }}">Выбрать</button>
+                                    <button type="button" class="btn btn-primary" onclick="selectStage('{{ stage.stage_id }}', '{{ stage.title }}')">Выбрать</button>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -103,18 +108,16 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">ФИО</th>
-                            <th scope="col">Действие</th>
+                            <th>ФИО</th>
+                            <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for employee in employees %}
                             <tr>
-                                <td>{{ employee.employee_id }}</td>
                                 <td>{{ employee.full_name }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary select-employee" data-id="{{ employee.employee_id }}" data-name="{{ employee.full_name }}">Выбрать</button>
+                                    <button type="button" class="btn btn-primary" onclick="selectEmployee('{{ employee.employee_id }}', '{{ employee.full_name }}')">Выбрать</button>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -126,39 +129,25 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.select-production').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var productionId = this.getAttribute('data-id');
-                var productionName = this.getAttribute('data-name');
-                document.getElementById('production_id').value = productionId;
-                document.getElementById('production_name').value = productionName;
-                var productionModal = bootstrap.Modal.getInstance(document.getElementById('productionModal'));
-                productionModal.hide();
-            });
-        });
+    function selectProduction(id, title) {
+        document.getElementById('production_id').value = id;
+        document.getElementById('production_name').value = title;
+        var modal = bootstrap.Modal.getInstance(document.getElementById('productionModal'));
+        modal.hide();
+    }
 
-        document.querySelectorAll('.select-stage').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var stageId = this.getAttribute('data-id');
-                var stageName = this.getAttribute('data-name');
-                document.getElementById('stage_id').value = stageId;
-                document.getElementById('stage_name').value = stageName;
-                var stageModal = bootstrap.Modal.getInstance(document.getElementById('stageModal'));
-                stageModal.hide();
-            });
-        });
+    function selectStage(id, title) {
+        document.getElementById('stage_id').value = id;
+        document.getElementById('stage_name').value = title;
+        var modal = bootstrap.Modal.getInstance(document.getElementById('stageModal'));
+        modal.hide();
+    }
 
-        document.querySelectorAll('.select-employee').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var employeeId = this.getAttribute('data-id');
-                var employeeName = this.getAttribute('data-name');
-                document.getElementById('employee_id').value = employeeId;
-                document.getElementById('employee_name').value = employeeName;
-                var employeeModal = bootstrap.Modal.getInstance(document.getElementById('employeeModal'));
-                employeeModal.hide();
-            });
-        });
-    });
+    function selectEmployee(id, full_name) {
+        document.getElementById('employee_id').value = id;
+        document.getElementById('employee_name').value = full_name;
+        var modal = bootstrap.Modal.getInstance(document.getElementById('employeeModal'));
+        modal.hide();
+    }
 </script>
 {% endblock %}

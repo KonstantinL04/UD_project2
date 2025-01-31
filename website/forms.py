@@ -1,6 +1,7 @@
 from django import forms 
 from django.contrib.auth.forms import UserCreationForm 
 from django.contrib.auth.models import User
+from django.utils.safestring import mark_safe
 from .models import Employees, Positions, Production, Schedule, StagesProduction, EmployeePosition
 
 class SignUpForm(UserCreationForm): 
@@ -60,7 +61,7 @@ class EmployeeForm(forms.ModelForm):
         model = Employees
         fields = ['full_name']
         labels = {
-            'full_name': '',
+            'full_name': 'ФИО',
         }
         widgets = {
             'full_name': forms.TextInput(attrs={
@@ -69,14 +70,17 @@ class EmployeeForm(forms.ModelForm):
                 'style': 'max-width: 300px;',
             }),
         }
+    def __init__(self, *args, **kwargs):
+        super(EmployeeForm, self).__init__(*args, **kwargs)
+        self.fields['full_name'].label = mark_safe('<label for="id_full_name" class="form-label" style="font-weight: bold;">ФИО</label>')
 
 class PositionForm(forms.ModelForm):
     class Meta:
         model = Positions
         fields = ['title', 'skills']
         labels = {
-            'title': '',
-            'skills': '',
+            'title': 'Название',
+            'skills': 'Навыки',
         }
         widgets = {
             'title': forms.TextInput(attrs={
@@ -92,13 +96,19 @@ class PositionForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        super(PositionForm, self).__init__(*args, **kwargs)
+        self.fields['title'].label = mark_safe('<label for="id_title" class="form-label" style="font-weight: bold;">Название</label>')
+        self.fields['skills'].label = mark_safe('<label for="id_skills" class="form-label" style="font-weight: bold;">Навыки</label>')
+
+
 class ProductionForm(forms.ModelForm):
     class Meta:
         model = Production
         fields = ['title', 'description']
         labels = {
-            'title': '',
-            'description': '',
+            'title': 'Название',
+            'description': 'Описание',
         }
         widgets = {
             'title': forms.TextInput(attrs={
@@ -113,13 +123,18 @@ class ProductionForm(forms.ModelForm):
                 'style': 'max-width: 300px;',
             }),
         }
+    def __init__(self, *args, **kwargs):
+        super(ProductionForm, self).__init__(*args, **kwargs)
+        self.fields['title'].label = mark_safe('<label for="id_title" class="form-label" style="font-weight: bold;">Название</label>')
+        self.fields['description'].label = mark_safe('<label for="id_description" class="form-label" style="font-weight: bold;">Описание</label>')
+
 
 class StagesProductionForm(forms.ModelForm):
     class Meta:
         model = StagesProduction
         fields = ['title']
         labels = {
-            'title': '',
+            'title': 'Стадия',
         }
         widgets = {
             'title': forms.TextInput(attrs={
@@ -128,6 +143,11 @@ class StagesProductionForm(forms.ModelForm):
                 'style': 'max-width: 300px;',
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(StagesProductionForm, self).__init__(*args, **kwargs)
+        self.fields['title'].label = mark_safe('<label for="id_title" class="form-label" style="font-weight: bold;">Название</label>')
+
 
 class EmployeePositionForm(forms.ModelForm):
     class Meta:
@@ -161,6 +181,10 @@ class EmployeePositionForm(forms.ModelForm):
                 'id': 'employee_id'
             }),
         }
+    def __init__(self, *args, **kwargs):
+        super(EmployeePositionForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].label = mark_safe('<label for="start_date" class="form-label" style="font-weight: bold;">Дата начала</label>')
+        self.fields['end_date'].label = mark_safe('<label for="end_date" class="form-label" style="font-weight: bold;">Дата окончания</label>')
 
 class ScheduleForm(forms.ModelForm):
     class Meta:
@@ -205,4 +229,13 @@ class ScheduleForm(forms.ModelForm):
                 'type': 'datetime-local'
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(ScheduleForm, self).__init__(*args, **kwargs)
+        self.fields['production'].label = mark_safe('<label for="id_production" class="form-label" style="font-weight: bold;">Постановка</label>')
+        self.fields['stage'].label = mark_safe('<label for="id_stage" class="form-label" style="font-weight: bold;">Стадия</label>')
+        self.fields['employee'].label = mark_safe('<label for="id_employee" class="form-label" style="font-weight: bold;">Сотрудник</label>')
+        self.fields['team'].label = mark_safe('<label for="team" class="form-label" style="font-weight: bold;">Состав</label>')
+        self.fields['start_time'].label = mark_safe('<label for="id_start_time" class="form-label" style="font-weight: bold;">Начало постановки</label>')
+        self.fields['end_time'].label = mark_safe('<label for="id_end_time" class="form-label" style="font-weight: bold;">Конец постановки</label>')
 

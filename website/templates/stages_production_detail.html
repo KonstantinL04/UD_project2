@@ -9,7 +9,11 @@
             <td>{{ stage.title }}</td>
         </tr>
     </table>
-    <div style="display: inline-flex; gap: 10px;">
+    <div style="display: inline-flex; gap: 5px;">
+        <a href="{% url 'edit_stages_production' stage.stage_id %}" class="btn btn-warning d-flex align-items-center">
+            <span class="material-icons" style="color: white; font-size: 16px; margin-right: 4px;">edit</span>
+            <span style="color: white;">Редактировать</span>
+        </a>
         <form action="{% url 'delete_stages_production' stage.stage_id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger d-flex align-items-center">

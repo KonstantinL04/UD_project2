@@ -53,3 +53,5 @@ class Schedule(models.Model):
     class Meta:
         db_table = 'schedule'
         unique_together = (('schedule_id', 'production'),)
+
+

@@ -7,7 +7,9 @@ from .models import Employees, Positions, Production, StagesProduction, Employee
 from django.core.paginator import Paginator
 from .forms import EmployeeForm, PositionForm, ProductionForm, StagesProductionForm, EmployeePositionForm, ScheduleForm
 from django.urls import reverse
-from django.db.models import Q
+from django.db.models import Count, Q
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 def home (request):
     productions = Production.objects.all()
@@ -52,7 +54,9 @@ def register_user(request):
 def employees_view(request):
     query = request.GET.get('q')
     if query:
-        employees_list = Employees.objects.filter(Q(full_name__icontains=query))
+        employees_list = Employees.objects.filter(
+            Q(full_name__icontains=query)
+        )
     else:
         employees_list = Employees.objects.all()
     paginator = Paginator(employees_list, 30) 
@@ -64,7 +68,10 @@ def employees_view(request):
 def positions_view(request):
     query = request.GET.get('q')
     if query:
-        positions_list = Positions.objects.filter(Q(title__icontains=query)) | Positions.objects.filter(Q(skills__icontains=query))
+        positions_list = Positions.objects.filter(
+            Q(title__icontains=query) | 
+            Q(skills__icontains=query)
+        )
     else:
         positions_list = Positions.objects.all()
     paginator = Paginator(positions_list, 30)
@@ -75,7 +82,10 @@ def positions_view(request):
 def production_view(request):
     query = request.GET.get('q')
     if query:
-        production = Production.objects.filter(Q(title__icontains=query)) | Production.objects.filter(Q(description__icontains=query))
+        production = Production.objects.filter(
+            Q(title__icontains=query) | 
+            Q(description__icontains=query)
+        )
     else:
         production = Production.objects.all()
     paginator = Paginator(production, 30)
@@ -86,7 +96,9 @@ def production_view(request):
 def stages_production_view(request):
     query = request.GET.get('q')
     if query:
-        stages_production = StagesProduction.objects.filter(Q(title__icontains=query))
+        stages_production = StagesProduction.objects.filter(
+            Q(title__icontains=query)
+        )
     else:
         stages_production = StagesProduction.objects.all()
     paginator = Paginator(stages_production, 30)
@@ -97,7 +109,12 @@ def stages_production_view(request):
 def employee_position_view(request):
     query = request.GET.get('q')
     if query:
-        employee_position = EmployeePosition.objects.filter(Q(employee__full_name__icontains=query) | Q(position__title__icontains=query)) | EmployeePosition.objects.filter(Q(start_date__icontains=query) | Q(end_date__icontains=query))
+        employee_position = EmployeePosition.objects.filter(
+            Q(employee__full_name__icontains=query) | 
+            Q(position__title__icontains=query) | 
+            Q(start_date__icontains=query) | 
+            Q(end_date__icontains=query)
+        )
     else:
         employee_position = EmployeePosition.objects.select_related('employee', 'position').order_by('start_date').all()
     paginator = Paginator(employee_position, 30)
@@ -108,7 +125,14 @@ def employee_position_view(request):
 def schedule_view(request):
     query = request.GET.get('q')
     if query:
-        schedules_list = Schedule.objects.filter(Q(production__title__icontains=query)) | Schedule.objects.filter(Q(stage__title__icontains=query)) | Schedule.objects.filter(Q(employee__full_name__icontains=query)) | Schedule.objects.filter(Q(team__icontains=query)) | Schedule.objects.filter(Q(start_time__icontains=query)) | Schedule.objects.filter(Q(end_time__icontains=query))
+        schedules_list = Schedule.objects.filter(
+            Q(production__title__icontains=query) | 
+            Q(stage__title__icontains=query) | 
+            Q(employee__full_name__icontains=query) | 
+            Q(team__icontains=query) | 
+            Q(start_time__icontains=query) | 
+            Q(end_time__icontains=query)
+        )
     else:
         schedules_list = Schedule.objects.all()
     paginator = Paginator(schedules_list, 30)  
@@ -116,6 +140,49 @@ def schedule_view(request):
     page_obj = paginator.get_page(page_number)
     return render(request, 'schedule.html', {'page_obj': page_obj})
 
+def get_audiences_schedule(query=None):
+    audiences_schedule = Schedule.objects.filter(
+        stage__title='Представление'
+    ).values(
+        'production__title',
+        'start_time',
+        'end_time'
+    ).distinct().order_by('start_time')
+
+    if query:
+        audiences_schedule = audiences_schedule.filter(
+            Q(production__title__icontains=query) |
+            Q(start_time__icontains=query) |
+            Q(end_time__icontains=query)
+        )
+
+    return audiences_schedule
+
+def audiences_schedule_view(request):
+    query = request.GET.get('q', '')
+    audiences_schedule = get_audiences_schedule(query)
+    paginator = Paginator(audiences_schedule, 30)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'audiences_schedule.html', {'page_obj': page_obj, 'query': query})
+
+def search_positions(request):
+    query = request.GET.get('q')
+    if query:
+        positions = Positions.objects.filter(Q(title__icontains=query))
+    else:
+        positions = Positions.objects.all()
+    html = render_to_string('partials/positions_list.html', {'positions': positions})
+    return JsonResponse({'html': html})
+
+def search_employees(request):
+    query = request.GET.get('q')
+    if query:
+        employees = Employees.objects.filter(Q(full_name__icontains=query))
+    else:
+        employees = Employees.objects.all()
+    html = render_to_string('partials/employees_list.html', {'employees': employees})
+    return JsonResponse({'html': html})
 
 def add_employee(request):
     if request.method == 'POST':
